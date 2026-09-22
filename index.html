@@ -44,10 +44,14 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
+            overscroll-behavior: none;
             background-color: #040814;
             font-family: 'Rajdhani', sans-serif;
             color: #ffffff;
         }
+        /* Fara asta, un swipe pornit din joystick/butoane langa marginea ecranului
+           poate fi interceptat de gestul de "inapoi" al telefonului */
+        #mobile-hud, #mobile-hud * { touch-action: none; }
         canvas {
             display: block;
             touch-action: none;
@@ -87,7 +91,7 @@
         }
         @media (hover: hover) and (pointer: fine) { #mobile-hud { display: none; } }
         /* Garantează starea ascunsă chiar dacă Tailwind CDN se încarcă mai greu/e blocat */
-        .hidden { display: none !important; }
+        .hidden { display: none; } /* fallback daca CDN Tailwind intarzie; stilul inline din JS tot are prioritate */
         .graf { font-family: 'Permanent Marker', Impact, cursive; }
         .graf-title {
             font-family: 'Permanent Marker', Impact, cursive; line-height: .88; text-align: center;
@@ -254,30 +258,33 @@
         <div id="joy1-knob" class="joystick-knob bg-gradient-to-tr from-orange-600 to-wuOrange shadow-[0_0_12px_#ff6b00]"></div>
     </div>
 
-    <div class="absolute bottom-28 left-4 pointer-events-auto">
+    <div class="absolute bottom-48 right-4 pointer-events-auto">
         <button id="btn-shoot-p1" class="w-16 h-16 rounded-full bg-gradient-to-tr from-orange-600 via-wuOrange to-amber-400 border-2 border-white active:scale-90 text-black font-orbitron font-black text-[10px] flex flex-col items-center justify-center shadow-2xl transition">
             <i class="fa-solid fa-crosshairs text-base mb-0.5"></i> SHOOT P1
         </button>
     </div>
 
-    <div class="absolute bottom-28 left-[5.75rem] flex gap-2 pointer-events-auto">
+    <div class="absolute bottom-72 right-4 flex gap-2 pointer-events-auto">
         <button id="rot-l-p1" class="rot-btn"><i class="fa-solid fa-rotate-left"></i></button>
         <button id="rot-r-p1" class="rot-btn"><i class="fa-solid fa-rotate-right"></i></button>
     </div>
 
-    <div id="p2-mobile-controls" class="hidden">
-        <div class="absolute bottom-28 right-[5.75rem] flex gap-2 pointer-events-auto">
-            <button id="rot-l-p2" class="rot-btn b"><i class="fa-solid fa-rotate-left"></i></button>
-            <button id="rot-r-p2" class="rot-btn b"><i class="fa-solid fa-rotate-right"></i></button>
-        </div>
-        <div id="joy2-base" class="joystick-base right-4 pointer-events-auto">
+    <!-- P2: exact acelasi aranjament ca P1 (joystick stanga, shoot+rotire dreapta),
+         dar intr-un strat rotit 180 grade si lipit SUS, pentru joc fata-in-fata pe acelasi telefon -->
+    <div id="p2-mobile-controls" class="hidden absolute inset-0 pointer-events-none" style="transform: rotate(180deg);">
+        <div id="joy2-base" class="joystick-base left-4 pointer-events-auto">
             <div id="joy2-knob" class="joystick-knob bg-gradient-to-tr from-blue-600 to-wuBlue shadow-[0_0_12px_#00d2ff]"></div>
         </div>
 
-        <div class="absolute bottom-28 right-4 pointer-events-auto">
+        <div class="absolute bottom-48 right-4 pointer-events-auto">
             <button id="btn-shoot-p2" class="w-16 h-16 rounded-full bg-gradient-to-tr from-blue-600 via-wuBlue to-cyan-300 border-2 border-white active:scale-90 text-black font-orbitron font-black text-[10px] flex flex-col items-center justify-center shadow-2xl transition">
                 <i class="fa-solid fa-crosshairs text-base mb-0.5"></i> SHOOT P2
             </button>
+        </div>
+
+        <div class="absolute bottom-72 right-4 flex gap-2 pointer-events-auto">
+            <button id="rot-l-p2" class="rot-btn b"><i class="fa-solid fa-rotate-left"></i></button>
+            <button id="rot-r-p2" class="rot-btn b"><i class="fa-solid fa-rotate-right"></i></button>
         </div>
     </div>
 </div>
@@ -403,8 +410,8 @@
         label: "P2"
     };
 
-    const highBasket = { x: 680, y: 120, radius: 45, pts: 100, label: "HIGH" };
-    const lowBasket = { x: 540, y: 180, radius: 55, pts: 50, label: "LOW" };
+    const highBasket = { x: 130, y: 130, radius: 45, pts: 100, label: "HIGH" };
+    const lowBasket = { x: 670, y: 130, radius: 55, pts: 50, label: "LOW" };
 
     let artifacts = [];
     let projectiles = [];
@@ -978,7 +985,14 @@ let arenaBg = null;
         document.getElementById('game-over-screen').style.display = 'flex';
     }
 
+    function requestFullscreenSafe() {
+        const el = document.documentElement;
+        const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+        if (req) { try { Promise.resolve(req.call(el)).catch(() => {}); } catch (e) {} }
+    }
+
     function startGame(mode) {
+        requestFullscreenSafe();
         gameMode = mode;
         p1.score = 0; p1.inventory = 0; p1.x = 320; p1.y = 650; p1.vx = 0; p1.vy = 0; p1.vRot = 0; p1.angle = -Math.PI / 2;
         p2.score = 0; p2.inventory = 0; p2.x = 480; p2.y = 650; p2.vx = 0; p2.vy = 0; p2.vRot = 0; p2.angle = -Math.PI / 2;
