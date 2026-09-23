@@ -1,0 +1,78 @@
+        * {
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            overscroll-behavior: none;
+            background-color: #040814;
+            font-family: 'Rajdhani', sans-serif;
+            color: #ffffff;
+        }
+        /* Fara asta, un swipe pornit din joystick/butoane langa marginea ecranului
+           poate fi interceptat de gestul de "inapoi" al telefonului */
+        #mobile-hud, #mobile-hud * { touch-action: none; }
+        canvas {
+            display: block;
+            touch-action: none;
+        }
+        .glow-orange {
+            text-shadow: 0 0 12px rgba(255, 107, 0, 0.8);
+        }
+        .glow-blue {
+            text-shadow: 0 0 12px rgba(0, 210, 255, 0.8);
+        }
+        .glass-panel {
+            background: rgba(10, 17, 40, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 210, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        .joystick-base {
+            position: absolute;
+            bottom: 25px;
+            width: 110px;
+            height: 110px;
+            background: rgba(0, 210, 255, 0.1);
+            border: 2px solid rgba(0, 210, 255, 0.4);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 40;
+        }
+        .joystick-knob {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 2px solid #ffffff;
+            position: absolute;
+        }
+        @media (hover: hover) and (pointer: fine) { #mobile-hud { display: none; } }
+        /* Garantează starea ascunsă chiar dacă Tailwind CDN se încarcă mai greu/e blocat */
+        .hidden { display: none; } /* fallback daca CDN Tailwind intarzie; stilul inline din JS tot are prioritate */
+        .graf { font-family: 'Permanent Marker', Impact, cursive; }
+        .graf-title {
+            font-family: 'Permanent Marker', Impact, cursive; line-height: .88; text-align: center;
+            color: #00d2ff; -webkit-text-stroke: 3px #050914; paint-order: stroke fill;
+            text-shadow: 4px 4px 0 #ff6b00, 8px 8px 0 #050914, 0 0 34px rgba(0,210,255,.55);
+            transform: rotate(-5deg) skewX(-8deg); animation: tagIn .5s cubic-bezier(.2,1.6,.4,1) both;
+        }
+        .graf-title.o { color: #ff6b00; text-shadow: 4px 4px 0 #00d2ff, 8px 8px 0 #050914, 0 0 34px rgba(255,107,0,.55); transform: rotate(-2deg) skewX(-8deg) translateX(30px); animation-delay: .12s; }
+        .graf-sticker { font-family: 'Permanent Marker', Impact, cursive; background: #ff6b00; color: #050914; padding: 2px 16px; border: 3px solid #050914; box-shadow: 5px 5px 0 #00d2ff; transform: rotate(6deg); display: inline-block; }
+        .btn-graf { font-family: 'Permanent Marker', Impact, cursive; letter-spacing: .04em; color: #050914; border: 3px solid #050914; box-shadow: 6px 6px 0 #050914; transform: rotate(-1.5deg) skewX(-4deg); transition: transform .12s, box-shadow .12s; }
+        .btn-graf:hover { transform: rotate(1deg) skewX(-4deg) scale(1.03); box-shadow: 9px 9px 0 #050914; }
+        .btn-graf:active { transform: translate(4px, 4px) skewX(-4deg); box-shadow: 1px 1px 0 #050914; }
+        .bolt { animation: flick 3.2s infinite; }
+        @keyframes flick { 0%, 100% { opacity: 1 } 46% { opacity: 1 } 48% { opacity: .35 } 50% { opacity: 1 } 52% { opacity: .5 } 54% { opacity: 1 } }
+        @keyframes tagIn { from { opacity: 0; transform: scale(1.6) rotate(-14deg) } }
+        @media (prefers-reduced-motion: reduce) { .bolt, .graf-title { animation: none } }
+        .rot-btn { width: 48px; height: 48px; border-radius: 50%; color: #fff; touch-action: none; background: rgba(255,107,0,.28); border: 2px solid #ff6b00; }
+        .rot-btn.b { background: rgba(0,210,255,.25); border-color: #00d2ff; }
+        .rot-btn:active { transform: scale(.9); }
