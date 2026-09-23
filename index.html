@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Watt's Up #16166 - FTC DECODE 2D Game</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&family=Permanent+Marker&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        wuOrange: '#ff6b00',
+                        wuBlue: '#00d2ff',
+                        wuDarkNavy: '#040814',
+                        wuNavyCard: '#0a1128',
+                        wuYellow: '#ffd700',
+                        wuPurple: '#a855f7'
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        rajdhani: ['Rajdhani', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="relative w-full h-full flex flex-col items-center justify-center overflow-hidden">
+
+<!-- SPLASH SCREEN / MAIN MENU -->
+<div id="splash-screen" class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-wuDarkNavy overflow-hidden p-4">
+    <svg class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+            <radialGradient id="gO"><stop offset="0" stop-color="#ff6b00" stop-opacity=".6"/><stop offset="1" stop-color="#ff6b00" stop-opacity="0"/></radialGradient>
+            <radialGradient id="gB"><stop offset="0" stop-color="#00d2ff" stop-opacity=".5"/><stop offset="1" stop-color="#00d2ff" stop-opacity="0"/></radialGradient>
+            <pattern id="dots" width="18" height="18" patternUnits="userSpaceOnUse"><circle cx="9" cy="9" r="2" fill="#00d2ff" opacity=".14"/></pattern>
+        </defs>
+        <rect width="1000" height="700" fill="url(#dots)"/>
+        <circle cx="150" cy="130" r="240" fill="url(#gO)"/><circle cx="860" cy="190" r="260" fill="url(#gB)"/>
+        <circle cx="790" cy="640" r="250" fill="url(#gO)"/><circle cx="110" cy="620" r="230" fill="url(#gB)"/>
+        <g stroke-linecap="round" fill="none" stroke-width="8" opacity=".55">
+            <path d="M110 210v90M170 195v50M230 210v120" stroke="#ff6b00"/><path d="M810 290v100M875 285v60M935 300v130" stroke="#00d2ff"/>
+        </g>
+        <g class="bolt" stroke-width="5" stroke-linejoin="round" stroke="#050914">
+            <polygon points="90,330 40,470 95,470 60,610 165,430 108,430 145,330" fill="#ff6b00"/>
+            <polygon points="900,410 850,540 902,540 872,660 965,510 918,510 950,410" fill="#00d2ff"/>
+        </g>
+        <g fill="none" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" opacity=".85">
+            <path d="M70 60q30-45 60 0t60 0t60 0t60 0" stroke="#00d2ff"/><path d="M700 60q25 50 50 0t50 0t50 0t50 0" stroke="#ff6b00"/>
+            <path d="M700 590q-45-75 30-95q75-15 65 42q-12 48-54 26" stroke="#ff6b00"/><path d="M240 650l80-32l-24-38M320 618l-34 14" stroke="#00d2ff"/>
+        </g>
+        <polygon points="500,30 512,62 546,62 518,82 529,115 500,95 471,115 482,82 454,62 488,62" fill="#ff6b00" stroke="#050914" stroke-width="4" transform="translate(-320 520) scale(.9)"/>
+        <polygon points="500,30 512,62 546,62 518,82 529,115 500,95 471,115 482,82 454,62 488,62" fill="#00d2ff" stroke="#050914" stroke-width="4" transform="translate(300 -10) scale(.7)"/>
+    </svg>
+
+    <div class="relative z-10 flex flex-col items-center gap-7 w-full max-w-md">
+        <div class="flex flex-col items-center">
+            <h1 class="graf-title text-6xl sm:text-8xl">WATT'S</h1>
+            <h1 class="graf-title o text-7xl sm:text-9xl -mt-1">UP</h1>
+            <span class="graf-sticker text-2xl sm:text-3xl -mt-2 sm:-mt-4">#16166</span>
+        </div>
+        <p class="graf text-wuBlue text-base sm:text-lg -rotate-2" style="text-shadow:2px 2px 0 #050914">FTC DECODE · robot game</p>
+
+        <div class="flex flex-col w-full gap-4">
+            <button onclick="startGame('practice')" class="btn-graf w-full py-3.5 px-6 bg-wuOrange text-lg sm:text-xl flex items-center justify-center gap-3">
+                <i class="fa-solid fa-user"></i> PRACTICE · SOLO 60s
+            </button>
+            <button onclick="startGame('1v1')" class="btn-graf w-full py-3.5 px-6 bg-wuBlue text-lg sm:text-xl flex items-center justify-center gap-3">
+                <i class="fa-solid fa-users"></i> 1v1 LOCAL · 60s
+            </button>
+        </div>
+
+        <div class="text-[11px] font-mono text-slate-300 border-2 border-dashed border-wuOrange/70 bg-wuDarkNavy/70 px-4 py-3 w-full -rotate-1">
+            <p>P1: <b class="text-wuOrange">WASD</b> mișcare · <b class="text-wuOrange">Q / E</b> rotire · <b class="text-wuOrange">SPACE</b> tragi</p>
+            <p>P2: <b class="text-wuBlue">SĂGEȚI</b> mișcare · <b class="text-wuBlue">, / .</b> rotire · <b class="text-wuBlue">ENTER / M</b> tragi</p>
+            <p class="text-slate-400 mt-1">Robotul se întoarce lin spre direcția de mers. Cu Q/E (sau , / .) preiei aim-ul până te oprești o clipă.</p>
+        </div>
+    </div>
+</div>
+
+<!-- GAME OVER OVERLAY / RESULTS -->
+<div id="game-over-screen" class="hidden absolute inset-0 z-50 flex-col items-center justify-center bg-wuDarkNavy/95 backdrop-blur-md p-4">
+    <div class="glass-panel p-6 sm:p-10 rounded-2xl border-2 border-wuYellow max-w-lg w-full text-center flex flex-col items-center gap-6 shadow-2xl">
+        <div class="text-5xl">🏆</div>
+        <div>
+            <h2 class="font-orbitron font-black text-2xl sm:text-3xl text-wuYellow tracking-wider">
+                MECI ÎNCHEIAT!
+            </h2>
+            <p id="winner-text" class="text-lg sm:text-2xl font-orbitron font-bold text-white mt-2 glow-blue">
+                JUCĂTORUL 1 A CÂȘTIGAT!
+            </p>
+        </div>
+
+        <div class="flex justify-center items-center gap-6 glass-panel py-3 px-6 rounded-xl w-full">
+            <div class="text-center">
+                <span class="text-xs text-orange-400 font-mono block">P1 (ORANGE)</span>
+                <span id="final-score-p1" class="font-orbitron text-xl sm:text-2xl font-bold text-wuOrange">0 PTS</span>
+            </div>
+            <div id="final-p2-box" class="text-center">
+                <span class="text-xs text-cyan-400 font-mono block">P2 (BLUE)</span>
+                <span id="final-score-p2" class="font-orbitron text-xl sm:text-2xl font-bold text-wuBlue">0 PTS</span>
+            </div>
+        </div>
+
+        <div class="flex flex-col w-full gap-3 mt-2">
+            <button onclick="restartGame()" class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-wuOrange to-amber-500 hover:from-amber-500 hover:to-wuOrange text-black font-orbitron font-black text-sm sm:text-base transition transform active:scale-95 shadow-lg flex items-center justify-center gap-2">
+                <i class="fa-solid fa-rotate-right"></i> REJOACĂ
+            </button>
+            <button onclick="exitToMenu()" class="w-full py-3.5 px-6 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-orbitron font-bold text-sm sm:text-base transition transform active:scale-95 border border-slate-600 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-house"></i> MENIU PRINCIPAL
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- HUD Header -->
+<header class="absolute top-0 left-0 w-full z-30 p-2 sm:p-4 flex flex-wrap justify-between items-center pointer-events-none gap-2">
+    <!-- Team Logo & Name -->
+    <div class="flex items-center gap-2 sm:gap-3 glass-panel px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl pointer-events-auto border-l-4 border-l-wuOrange">
+        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-slate-900 border border-wuOrange flex items-center justify-center p-1 shadow-lg overflow-hidden">
+            <img src="images/watts-up-logo.png" alt="Watts Up Logo" class="w-full h-full object-contain">
+        </div>
+
+        <div>
+            <h1 class="font-orbitron font-black text-xs sm:text-base tracking-wider text-wuBlue glow-blue leading-tight flex items-center gap-1.5">
+                WATT'S UP <span class="bg-wuOrange text-black px-1.5 py-0.5 rounded text-[10px] sm:text-xs font-mono font-bold">#16166</span>
+            </h1>
+            <p class="text-[9px] sm:text-xs text-orange-400 font-mono tracking-wide">FTC DECODE 2D GAME</p>
+        </div>
+    </div>
+
+    <!-- TIMER DISPLAY -->
+    <div class="glass-panel px-4 py-1.5 rounded-xl pointer-events-auto text-center border-b-2 border-b-wuYellow">
+        <span class="text-[9px] text-slate-400 font-mono block">TIMP RĂMAS</span>
+        <span id="hud-timer" class="font-orbitron text-base sm:text-xl font-black text-wuYellow">01:00</span>
+    </div>
+
+    <!-- HUD Status: Inventory & Scores -->
+    <div class="flex items-center gap-2 sm:gap-4 glass-panel px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl pointer-events-auto">
+        <div class="text-center px-1 sm:px-2">
+            <span class="text-[9px] sm:text-[10px] text-orange-400 font-mono uppercase block">P1 (ORANGE)</span>
+            <span id="hud-score-p1" class="font-orbitron text-sm sm:text-base font-bold text-wuOrange glow-orange">0 PTS</span>
+            <span id="hud-inv-p1" class="text-[9px] text-slate-400 block font-mono">Inv: 0/3</span>
+        </div>
+
+        <div id="p2-score-box" class="hidden items-center gap-2 sm:gap-4">
+            <div class="h-6 sm:h-8 w-px bg-slate-700"></div>
+            <div class="text-center px-1 sm:px-2">
+                <span class="text-[9px] sm:text-[10px] text-cyan-400 font-mono uppercase block">P2 (BLUE)</span>
+                <span id="hud-score-p2" class="font-orbitron text-sm sm:text-base font-bold text-wuBlue glow-blue">0 PTS</span>
+                <span id="hud-inv-p2" class="text-[9px] text-slate-400 block font-mono">Inv: 0/3</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exit Menu Button -->
+    <button onclick="exitToMenu()" class="glass-panel px-3 py-1.5 rounded-xl text-xs font-orbitron font-bold text-slate-300 hover:text-wuOrange pointer-events-auto transition">
+        <i class="fa-solid fa-house"></i> MENU
+    </button>
+</header>
+
+<!-- Main Game Canvas Container -->
+<main id="game-container" class="relative w-full h-full flex items-center justify-center bg-wuDarkNavy">
+    <canvas id="gameCanvas"></canvas>
+</main>
+
+<!-- Touch Mobile Controls HUD -->
+<div id="mobile-hud" class="absolute inset-0 pointer-events-none z-20">
+    <div id="joy1-base" class="joystick-base left-4 pointer-events-auto">
+        <div id="joy1-knob" class="joystick-knob bg-gradient-to-tr from-orange-600 to-wuOrange shadow-[0_0_12px_#ff6b00]"></div>
+    </div>
+
+    <div class="absolute bottom-48 right-4 pointer-events-auto">
+        <button id="btn-shoot-p1" class="w-16 h-16 rounded-full bg-gradient-to-tr from-orange-600 via-wuOrange to-amber-400 border-2 border-white active:scale-90 text-black font-orbitron font-black text-[10px] flex flex-col items-center justify-center shadow-2xl transition">
+            <i class="fa-solid fa-crosshairs text-base mb-0.5"></i> SHOOT P1
+        </button>
+    </div>
+
+    <div class="absolute bottom-72 right-4 flex gap-2 pointer-events-auto">
+        <button id="rot-l-p1" class="rot-btn"><i class="fa-solid fa-rotate-left"></i></button>
+        <button id="rot-r-p1" class="rot-btn"><i class="fa-solid fa-rotate-right"></i></button>
+    </div>
+
+    <!-- P2: exact acelasi aranjament ca P1 (joystick stanga, shoot+rotire dreapta),
+         dar intr-un strat rotit 180 grade si lipit SUS, pentru joc fata-in-fata pe acelasi telefon -->
+    <div id="p2-mobile-controls" class="hidden absolute inset-0 pointer-events-none" style="transform: rotate(180deg);">
+        <div id="joy2-base" class="joystick-base left-4 pointer-events-auto">
+            <div id="joy2-knob" class="joystick-knob bg-gradient-to-tr from-blue-600 to-wuBlue shadow-[0_0_12px_#00d2ff]"></div>
+        </div>
+
+        <div class="absolute bottom-48 right-4 pointer-events-auto">
+            <button id="btn-shoot-p2" class="w-16 h-16 rounded-full bg-gradient-to-tr from-blue-600 via-wuBlue to-cyan-300 border-2 border-white active:scale-90 text-black font-orbitron font-black text-[10px] flex flex-col items-center justify-center shadow-2xl transition">
+                <i class="fa-solid fa-crosshairs text-base mb-0.5"></i> SHOOT P2
+            </button>
+        </div>
+
+        <div class="absolute bottom-72 right-4 flex gap-2 pointer-events-auto">
+            <button id="rot-l-p2" class="rot-btn b"><i class="fa-solid fa-rotate-left"></i></button>
+            <button id="rot-r-p2" class="rot-btn b"><i class="fa-solid fa-rotate-right"></i></button>
+        </div>
+    </div>
+</div>
+
+<!-- Notification Overlay -->
+<div id="notification-banner" class="opacity-0 transition-opacity duration-300 absolute top-16 left-1/2 -translate-x-1/2 z-40 bg-wuNavyCard border border-wuOrange text-wuBlue font-orbitron text-xs sm:text-sm font-bold px-4 py-2 rounded-full shadow-2xl pointer-events-none flex items-center gap-2">
+    <i class="fa-solid fa-bolt text-wuOrange"></i> <span id="notification-text">GOAL SCORED!</span>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>
