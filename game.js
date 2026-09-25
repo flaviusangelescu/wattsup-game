@@ -209,7 +209,16 @@
             // Doar fata-spate de pe stick (axa Y); stanga-dreapta pe stick e ignorata, robotul se ghideaza cu LB/RB
             let y = dz(gp.axes[1] || 0);
             vec.x = 0; vec.y = Math.max(-1, Math.min(1, y));
-            const rotStick = dz(gp.axes[2] || 0);
+            const rotStick = (() => {
+                // Nu toate controllerele raporteaza stick-ul drept pe axele 2/3 (depinde de model/OS/browser);
+                // luam axa cu cea mai mare deviatie dintre cele ramase, ca sa functioneze indiferent de mapare.
+                let best = 0, bestAbs = 0;
+                for (let i = 2; i < gp.axes.length; i++) {
+                    const v = dz(gp.axes[i] || 0);
+                    if (Math.abs(v) > bestAbs) { bestAbs = Math.abs(v); best = v; }
+                }
+                return best;
+            })();
             const rot = Math.max(-1, Math.min(1, ((gp.buttons[5] && gp.buttons[5].pressed ? 1 : 0) - (gp.buttons[4] && gp.buttons[4].pressed ? 1 : 0)) + rotStick));
             if (idx === 0) padRot1 = rot; else padRot2 = rot;
             const shootDown = !!((gp.buttons[6] && gp.buttons[6].pressed) || (gp.buttons[7] && gp.buttons[7].pressed));
@@ -217,7 +226,10 @@
             padPrevShoot[idx] = shootDown;
         });
     }
-    window.addEventListener('gamepadconnected', e => console.log('Controller conectat:', e.gamepad.id));
+    window.addEventListener('gamepadconnected', e => {
+        const gp = e.gamepad;
+        console.log('Controller conectat:', gp.id, '| mapping:', gp.mapping || '(nestandard)', '| axe:', gp.axes.length, '| butoane:', gp.buttons.length);
+    });
 
 
     /* ----------------------------------------------------
